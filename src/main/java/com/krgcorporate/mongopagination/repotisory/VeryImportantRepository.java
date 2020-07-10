@@ -2,6 +2,7 @@ package com.krgcorporate.mongopagination.repotisory;
 
 import com.krgcorporate.mongopagination.domain.VeryImportantData;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,5 +12,6 @@ public interface VeryImportantRepository extends MongoRepository<VeryImportantDa
 
     long countByProcessed(boolean processed);
 
-    List<VeryImportantData> findAllByProcessed(boolean processed);
+    @Query(value = "{ processed: false }", sort = "{ createdAt: 1 }")
+    List<VeryImportantData> findNotProcessed();
 }

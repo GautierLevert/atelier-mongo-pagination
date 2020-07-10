@@ -77,7 +77,7 @@ public class VeryImportantManager {
 
         log.info("Start processing {} objects.", repository.countByProcessed(false));
 
-        final List<VeryImportantData> values = repository.findAllByProcessed(false);
+        final List<VeryImportantData> values = repository.findNotProcessed();
 
         log.info("Elements retrieved for db.");
 
