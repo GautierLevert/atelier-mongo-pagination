@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      auto-index-creation: true
+      database: aterlier-pagination
+      host: localhost
+      port: 27017
