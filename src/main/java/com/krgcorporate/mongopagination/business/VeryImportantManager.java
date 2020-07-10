@@ -9,13 +9,15 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -73,21 +75,29 @@ public class VeryImportantManager {
     }
 
     public int process() {
-        // TODO please fix it
-
         log.info("Start processing {} objects.", repository.countByProcessed(false));
 
-        final List<VeryImportantData> values = repository.findNotProcessed();
+        Pageable pageable = PageRequest.of(0, 1000);
+        int count = 0;
 
-        log.info("Elements retrieved for db.");
+        Page<VeryImportantData> page;
+        int index = 0;
+        do {
+            page = repository.findNotProcessed(pageable);
 
-        final List<VeryImportantData> processed = values.stream()
-                .map(this::process)
-                .collect(Collectors.toList());
+            log.info("Page {} retrieved for db.", index);
 
-        log.info("Elements processed.");
+            count += repository.saveAll(
+                    page.get()
+                            .map(this::process)
+                            .collect(Collectors.toList())
+            ).size();
 
-        final int count = repository.saveAll(processed).size();
+            log.info("Page {} processed.", index);
+
+            ++index;
+
+        } while (page.hasNext());
 
         log.info("Elements saved.");
 
