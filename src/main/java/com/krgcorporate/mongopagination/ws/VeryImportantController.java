@@ -3,6 +3,7 @@ package com.krgcorporate.mongopagination.ws;
 import com.krgcorporate.mongopagination.business.VeryImportantManager;
 import com.krgcorporate.mongopagination.command.InsertCommand;
 import com.krgcorporate.mongopagination.result.Status;
+import com.mongodb.client.result.UpdateResult;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -25,8 +26,13 @@ public class VeryImportantController {
         return manager.insert(command.getCount());
     }
 
+    @PostMapping("reset")
+    public UpdateResult reset(@RequestBody final @NonNull InsertCommand command) {
+        return manager.reset();
+    }
+
     @GetMapping("status")
-    public Status getStatus() {
+    public @NonNull Status getStatus() {
         return manager.getStatus();
     }
 }

@@ -3,15 +3,21 @@ package com.krgcorporate.mongopagination.business;
 import com.krgcorporate.mongopagination.domain.VeryImportantData;
 import com.krgcorporate.mongopagination.repotisory.VeryImportantRepository;
 import com.krgcorporate.mongopagination.result.Status;
+import com.mongodb.client.result.UpdateResult;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Random;
 import java.util.stream.IntStream;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 @AllArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = @Autowired)
@@ -19,9 +25,11 @@ public class VeryImportantManager {
 
     private final @NonNull Random rnd = new Random();
 
+    private final @NonNull MongoTemplate template;
+
     private final @NonNull VeryImportantRepository repository;
 
-    public VeryImportantData generate() {
+    private VeryImportantData generate() {
         return VeryImportantData.builder()
                 .id(null)
                 .createdAt(Instant.now())
@@ -36,6 +44,16 @@ public class VeryImportantManager {
                 .mapToObj(index -> generate())
                 .peek(repository::insert)
                 .count();
+    }
+
+    public UpdateResult reset() {
+        return template.updateMulti(
+                new Query(where("processed").is(true)),
+                new Update()
+                        .set("processed", false)
+                        .set("updatedAt", null),
+                VeryImportantData.class
+        );
     }
 
     public Status getStatus() {
