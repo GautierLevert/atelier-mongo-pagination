@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.With;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -17,6 +18,7 @@ import java.time.Instant;
 @Document
 @Data
 @Builder
+@With
 @AllArgsConstructor(access = AccessLevel.PACKAGE, onConstructor_ = {@JsonCreator, @PersistenceConstructor})
 public class VeryImportantData {
 
@@ -27,10 +29,10 @@ public class VeryImportantData {
     private final @NonNull Instant createdAt;
 
     @Indexed
-    private @Nullable Instant updatedAt;
+    private final @Nullable Instant processedAt;
 
     @Indexed
-    private boolean processed;
+    private final boolean processed;
 
-    private double value;
+    private final double value;
 }

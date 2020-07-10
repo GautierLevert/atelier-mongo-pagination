@@ -13,5 +13,5 @@ public class Status {
 
     private long total;
 
-    private long updated;
+    private long processed;
 }

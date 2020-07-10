@@ -27,8 +27,13 @@ public class VeryImportantController {
     }
 
     @PostMapping("reset")
-    public UpdateResult reset(@RequestBody final @NonNull InsertCommand command) {
+    public @NonNull UpdateResult reset() {
         return manager.reset();
+    }
+
+    @PostMapping("process")
+    public int process() {
+        return manager.process();
     }
 
     @GetMapping("status")
